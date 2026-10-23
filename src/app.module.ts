@@ -4,6 +4,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ConfigModule } from '@nestjs/config';
 import z from 'zod';
+import { PrismaModule } from './prisma/prisma.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -20,14 +21,16 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     */
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.development.local', '.env.production.local'],
+      envFilePath: ['.env', '.env.production.local'],
       validationSchema: z.object({
         NODE_ENV: z
           .enum(['development', 'production', 'test', 'provision'])
           .default('development'),
         PORT: z.coerce.number().default(3000),
+        DATABASE_URL: z.url(),
       }),
     }),
+    PrismaModule
   ],
   controllers: [AppController],
   providers: [AppService],
